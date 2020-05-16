@@ -4,7 +4,6 @@ const express = require('express');
 const app = express();
 const mysql = require("mysql");
 
-
 require('dotenv').config();
 
 const connection;
@@ -21,17 +20,61 @@ else {
   });
 };
 
-// Make connection.
+// Makimg connection.
 connection.connect(function(err) {
-  if (err) {
-    console.error("error connecting: " + err.stack);
-    return;
-  }
-  console.log("connected as id " + connection.threadId);
+    if (err) {
+      console.error("error connecting: " + err.stack);
+      return;
+    }
+    console.log("connected as id " + connection.threadId);
+  });
+  
+  // PORT setup for the application
+  const PORT = process.env.PORT || 3000;
+  
+
+
+const router = express.Router();
+
+// Create all our routes and set up logic within those routes where needed.
+router.get("/", function(req, res) {
+  burger.all(function(data) {
+    const hbsObject = {
+      burgers: data
+    };
+    console.log(hbsObject);
+    res.render("index", hbsObject);
+  });
 });
 
-// PORT setup for the application
-const PORT = process.env.PORT || 3000;
+router.post("/api/burgers", function(req, res) {
+  burger.create([
+    "burger_name", "devoured"
+  ], [
+    req.body.burger, req.body.devoured
+  ], function(result) {
+    // Send back the ID of the new quote
+    res.json({ id: result.insertId });
+  });
+});
+
+router.put("/api/burgers/:id", function(req, res) {
+  const condition = "id = " + req.params.id;
+
+  console.log("condition", condition);
+
+  burger.update({
+    devoured: req.body.devoured
+  }, condition, function(result) {
+    if (result.changedRows == 0) {
+      // If no rows were changed, then the ID must not exist, so err
+      return res.status(err).end();
+    } else {
+      res.status(200).end();
+    }
+  });
+});
+
 
 // Content for the app from the "public" directory in the app directory.
 app.use(express.static("public")); 
