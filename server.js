@@ -1,10 +1,10 @@
 // Dependencies
-var path = require('path');
-var express = require('express');
-var app = express();
+const path = require('path');
+const express = require('express');
+const app = express();
 
 // PORT setup for the application
-var PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 // Static content for the app from the "public" directory in the app directory.
 app.use(express.static("public")); 
@@ -13,13 +13,13 @@ app.use(express.urlencoded({ extended: true}));
 app.use(express.json());
 
 // Set up handlebars
-var exphbs = require("express-handlebars");
+const exphbs = require("express-handlebars");
 
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 // Import route and give the server acces to them.
-var routes = require("./controllers/burgers_controller.js");
+const routes = require("./controllers/burgers_controller.js");
 
 app.use(routes);
 
